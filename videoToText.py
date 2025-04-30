@@ -10,12 +10,10 @@ import re
 import datetime
 import pandas as pd
 from tqdm import tqdm
+import argparse
 
 # global variables
-API_KEY = 'YOUR_API_KEY_HERE'
 YOUTUBE_RE = r'youtube.com/watch\?v=([\w-]*)' # re to parse out the video id given the youtube link
-youtube = build('youtube', 'v3', developerKey=API_KEY)  
-
 
 def download_from_id(yt_api, video_link=None, video_id=None):
     ''' function to download the snippet from the video link or video id'''
@@ -28,7 +26,7 @@ def download_from_id(yt_api, video_link=None, video_id=None):
     rawSnippets = snippets.to_raw_data()
     return rawSnippets
 
-def get_all_videos_from_channel(channel_id):
+def get_all_videos_from_channel(youtube, channel_id):
     response = youtube.channels().list(
         part='contentDetails',
         id=channel_id
@@ -93,19 +91,30 @@ def get_all_transcripts_for_videos(videos, ytApi, cutoff_date=datetime.date(year
                     }
                     videosDict.append(snippetdict)
     return videosDict
-        
 
-
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Download and transcribe YouTube videos from Muskegon City Council meetings')
+    parser.add_argument('--api-key', required=True, help='YouTube API key')
+    parser.add_argument('--channel-id', default='UCI0JV91vepm1gAi6_O-5Nlg',
+                      help='YouTube channel ID (default: City of Muskegon Meetings channel)')
+    parser.add_argument('--output', default='all_transcripts_by_snippet.tsv',
+                      help='Output file path (default: all_transcripts_by_snippet.tsv)')
+    return parser.parse_args()
 
 if __name__ == '__main__':
+    args = parse_arguments()
+    
+    # Initialize YouTube API client
+    youtube = build('youtube', 'v3', developerKey=args.api_key)
+    
+    # Initialize YouTube Transcript API
     ytt_api = YouTubeTranscriptApi()
-    # Replace with your own API key
-    # Create the YouTube service
-    #TODO: get channelID from selenium or bs4
-    channelId = 'UCI0JV91vepm1gAi6_O-5Nlg' # this can be obtained by view page source and searching for channelId
-    #channelUrl = 'https://www.youtube.com/c/CityofMuskegonMeetings'
-    videoList = get_all_videos_from_channel(channelId)
+    
+    # Get videos and transcripts
+    videoList = get_all_videos_from_channel(youtube, args.channel_id)
     transcripts = get_all_transcripts_for_videos(videoList, ytt_api)
+    
+    # Save results
     df = pd.DataFrame(transcripts)
-    df.to_csv('all_transcripts_by_snippet.tsv', sep='\t')
+    df.to_csv(args.output, sep='\t')
     
