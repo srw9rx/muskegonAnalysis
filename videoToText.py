@@ -11,7 +11,7 @@ import datetime
 import pandas as pd
 
 # global variables
-API_KEY = 'AIzaSyDywctVSHqw49oOSj-Q0lY3sSOEWIUChrA'
+API_KEY = 'YOUR_API_KEY_HERE'
 YOUTUBE_RE = r'youtube.com/watch\?v=([\w-]*)' # re to parse out the video id given the youtube link
 youtube = build('youtube', 'v3', developerKey=API_KEY)  
 
