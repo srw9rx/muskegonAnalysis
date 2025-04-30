@@ -9,6 +9,7 @@ from googleapiclient.discovery import build
 import re
 import datetime
 import pandas as pd
+from tqdm import tqdm
 
 # global variables
 API_KEY = 'YOUR_API_KEY_HERE'
@@ -65,7 +66,7 @@ def get_all_videos_from_channel(channel_id):
 def get_all_transcripts_for_videos(videos, ytApi, cutoff_date=datetime.date(year=2022, day=3, month=1)):
     videosDict = []
     i = 0
-    for video in videos:
+    for video in tqdm(videos, "transcribing videos:"):
         i+=1
         title = video['title']
         datestring = None
