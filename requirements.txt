@@ -2,3 +2,5 @@ youtube-transcript-api
 google-api-python-client
 pandas
 tqdm
+ffmpeg-python
+yt-dlp
