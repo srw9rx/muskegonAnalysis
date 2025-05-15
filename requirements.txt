@@ -1,4 +1,8 @@
-youtube-transcript-api
+ffmpeg-python
 google-api-python-client
+librosa
 pandas
+scikit-learn
 tqdm
+youtube-transcript-api
+yt_dlp
