@@ -12,7 +12,8 @@ import pandas as pd
 from tqdm import tqdm
 
 # global variables
-API_KEY = 'YOUR_API_KEY_HERE'
+with open('ytapiKey.txt', 'r') as f:
+    API_KEY = f.read().strip()
 YOUTUBE_RE = r'youtube.com/watch\?v=([\w-]*)' # re to parse out the video id given the youtube link
 youtube = build('youtube', 'v3', developerKey=API_KEY)  
 
