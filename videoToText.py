@@ -61,7 +61,6 @@ def get_all_videos_from_channel(channel_id):
         next_page_token = response.get('nextPageToken')
         if not next_page_token:
             break
-
     return videos
 
 def get_all_transcripts_for_videos(videos, ytApi, cutoff_date=datetime.date(year=2022, day=3, month=1)):
@@ -95,6 +94,24 @@ def get_all_transcripts_for_videos(videos, ytApi, cutoff_date=datetime.date(year
                     videosDict.append(snippetdict)
     return videosDict
         
+def filtered_videos(videos, cutoff_date=datetime.date(year=2022, day=3, month=1)):
+    newVideos = []
+    for video in videos:
+        title = video['title']
+        datestring = None
+        video_date = datetime.date.today()
+        try:
+            datestring = title.split()[0]
+            if '/' in datestring:
+                video_date = datetime.datetime.strptime(datestring, '%m/%d/%y').date()
+            elif '-' in datestring:
+                video_date = datetime.datetime.strptime(datestring, '%m-%d-%y').date()
+        except Exception:
+            video_date = datetime.date.today()
+
+        if datetime.date.today() >= video_date >= cutoff_date  and "commission" in title.lower():
+            newVideos.append(video)
+    return newVideos
 
 
 
